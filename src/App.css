@@ -1,0 +1,37 @@
+.app {
+  margin: 2rem;
+  width: 500px;
+}
+
+.input {
+  box-shadow: none;
+  border: 2px solid;
+  border-color: #b5b5b5;
+}
+
+.input:focus {
+  border-color: whitesmoke;
+}
+
+.continue {
+  width: 100%;
+}
+
+.magicz {
+  margin-bottom: 0.5rem;
+}
+
+.tag:not(body) .delete {
+  margin-left: 5px;
+  margin-right: 0px;
+}
+
+.tag {
+  margin-right: 5px;
+  margin-bottom: 5px;
+  cursor: move;
+}
+
+.tag:last-child {
+  margin-bottom: none;
+}
