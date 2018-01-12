@@ -2,20 +2,37 @@ import React, { Component } from 'react';
 import 'bulma/css/bulma.css';
 import './App.css';
 
-import Tag from './components/Tag.js'
+import Tag from './components/Tag.js';
+
+import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
+
+const SortableItem = SortableElement(({tagMeta}) =>
+  <Tag name={tagMeta.name} index={tagMeta.key}/>
+);
+
+const SortableList = SortableContainer(({items}) => {
+  return (
+    <ul>
+      { items.map((item, index) => (
+        <SortableItem index={index} key={item.key} tagMeta={item}/>
+      ))
+      }
+    </ul>
+  );
+});
 
 class App extends Component {
-
   constructor(props) {
     super(props);
     this.state = {inputList: [], inputValue: '', helper: false, uniqueIdGen: 0};
     this.addTag = this.addTag.bind(this);
     this.deleteSaidTag = this.deleteSaidTag.bind(this);
+    this.onSortEnd = this.onSortEnd.bind(this);
   }
 
   deleteSaidTag(name) {  
     const temp = this.state.inputList.filter(function(item) { 
-        return item.props.name !== name
+        return item.name !== name
     })
     this.setState ({
       inputList: temp
@@ -26,7 +43,7 @@ class App extends Component {
     const inputList = this.state.inputList;
     for(let i=0; i<inputList.length; i++)
     {
-      if(inputList[i].props.name.toLowerCase()===tagName.toLowerCase()) {
+      if(inputList[i].name.toLowerCase()===tagName.toLowerCase()) {
         return true;
       }
     }
@@ -44,9 +61,10 @@ class App extends Component {
     else {
       this.refs.tagInput.value='';
       if(!this.tagExists(inputValue)) {
+        const concattedInputList = inputList.concat({"name": inputValue,"key": uniqueIdGen});
         this.setState({
         uniqueIdGen: uniqueIdGen+1,
-        inputList: inputList.concat(<Tag name={inputValue} key={uniqueIdGen} delete={this.deleteSaidTag}/>),
+        inputList: concattedInputList,
         helper: false
         });
       }
@@ -57,8 +75,16 @@ class App extends Component {
     this.setState({inputValue: e.target.value});
   }
 
+  onSortEnd = ({oldIndex, newIndex}) => {
+    this.setState({
+      inputList: arrayMove(this.state.inputList, oldIndex, newIndex),
+    });
+  };
+
   render() {
+
     return (
+
       <div className="app">
 
         <h1 className="title">What are your skills?</h1>
@@ -82,10 +108,14 @@ class App extends Component {
         </div>
 
         <div className="magicz">
-          {this.state.inputList}
+          { this.state.inputList.map(function(tagMeta) {
+              return (<Tag name={tagMeta.name} key={tagMeta.key} delete={this.deleteSaidTag}/>)
+          }, this) }
         </div>
 
         <a className="button is-info continue">Continue</a>
+
+        <SortableList items={this.state.inputList} onSortEnd={this.onSortEnd} axis="x" />
 
       </div>
     );

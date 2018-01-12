@@ -10,9 +10,9 @@ class Tag extends Component {
 
   render() {
     return (
-          <span className="tag is-primary">
+          <span className="tag is-success is-unselectable">
             {this.state.name}
-            <button className="delete is-small" onClick={this.props.delete.bind(null, this.state.name)}></button>
+            <button className="delete is-small"></button>
           </span>
     );
   }
