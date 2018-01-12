@@ -70,7 +70,7 @@ class App extends Component {
       else {
         this.setState({
           helper: true,
-          helperText:  `Please enter something dumbass`
+          helperText:  `Please enter something :)`
         })
       }
     }
@@ -92,7 +92,7 @@ class App extends Component {
     if(inputList.length===0) {
       this.setState({
           helper: true,
-          helperText:  `Please enter something dumbass`
+          helperText:  `Please enter something :)`
         })
     }
     else {
@@ -147,7 +147,7 @@ class App extends Component {
         </div>
 
         <div className="magicz">
-          <SortableList items={this.state.inputList} onSortEnd={this.onSortEnd} deleteFn={this.deleteSaidTag} axis="x" />
+          <SortableList items={this.state.inputList} onSortEnd={this.onSortEnd} deleteFn={this.deleteSaidTag} axis="xy" />
         </div>
 
         <a className="button is-info continue" onClick={this.submitSkills}>Continue</a>
