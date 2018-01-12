@@ -6,15 +6,15 @@ import Tag from './components/Tag.js';
 
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
-const SortableItem = SortableElement(({tagMeta}) =>
-  <Tag name={tagMeta.name} index={tagMeta.key} />
+const SortableItem = SortableElement(({tagMeta, deleteFn}) =>
+  <Tag name={tagMeta.name} index={tagMeta.key} deleteFn={deleteFn}/>
 );
 
-const SortableList = SortableContainer(({items}) => {
+const SortableList = SortableContainer(({items, deleteFn}) => {
   return (
     <ul>
       { items.map((item, index) => (
-        <SortableItem index={index} key={item.key} tagMeta={item}/>
+        <SortableItem index={index} key={item.key} tagMeta={item} deleteFn={deleteFn}/>
       ))
       }
     </ul>
@@ -147,7 +147,7 @@ class App extends Component {
         </div>
 
         <div className="magicz">
-          <SortableList items={this.state.inputList} onSortEnd={this.onSortEnd} axis="x" />
+          <SortableList items={this.state.inputList} onSortEnd={this.onSortEnd} deleteFn={this.deleteSaidTag} axis="x" />
         </div>
 
         <a className="button is-info continue" onClick={this.submitSkills}>Continue</a>

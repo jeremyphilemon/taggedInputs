@@ -12,7 +12,7 @@ class Tag extends Component {
     return (
           <span className="tag is-success is-unselectable">
             {this.state.name}
-            <button className="delete is-small"></button>
+            <button className="delete is-small" onClick={this.props.deleteFn.bind(null, this.state.name)}></button>
           </span>
     );
   }
