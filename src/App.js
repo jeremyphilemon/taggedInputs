@@ -7,7 +7,7 @@ import Tag from './components/Tag.js';
 import {SortableContainer, SortableElement, arrayMove} from 'react-sortable-hoc';
 
 const SortableItem = SortableElement(({tagMeta}) =>
-  <Tag name={tagMeta.name} index={tagMeta.key}/>
+  <Tag name={tagMeta.name} index={tagMeta.key} />
 );
 
 const SortableList = SortableContainer(({items}) => {
@@ -24,10 +24,11 @@ const SortableList = SortableContainer(({items}) => {
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {inputList: [], inputValue: '', helper: false, uniqueIdGen: 0};
+    this.state = {inputList: [], inputValue: '', helper: false, uniqueIdGen: 0, helperText: ''};
     this.addTag = this.addTag.bind(this);
     this.deleteSaidTag = this.deleteSaidTag.bind(this);
     this.onSortEnd = this.onSortEnd.bind(this);
+    this.submitSkills = this.submitSkills.bind(this);
   }
 
   deleteSaidTag(name) {  
@@ -53,10 +54,25 @@ class App extends Component {
     const inputList = this.state.inputList;
     const inputValue = this.state.inputValue;
     const uniqueIdGen = this.state.uniqueIdGen;
-    if(this.refs.tagInput.value==='' || inputList.length>9) {
-      this.setState({
-        helper: true
-      })
+    if(this.refs.tagInput.value==='' || inputList.length>9 || inputValue.length>50) {
+      if(inputList.length>9) {
+        this.setState({
+          helper: true,
+          helperText:  `You've exceed 10 skills`
+        })
+      }
+      else if(inputValue.length>50) {
+        this.setState({
+          helper: true,
+          helperText:  `Dude wtf?`
+        })
+      }
+      else {
+        this.setState({
+          helper: true,
+          helperText:  `Please enter something dumbass`
+        })
+      }
     }
     else {
       this.refs.tagInput.value='';
@@ -71,6 +87,23 @@ class App extends Component {
     }
   }
 
+  submitSkills(event) {
+    const inputList = this.state.inputList;
+    if(inputList.length===0) {
+      this.setState({
+          helper: true,
+          helperText:  `Please enter something dumbass`
+        })
+    }
+    else {
+      let skills = [];
+      for(let i=0; i<inputList.length; i++) {
+      skills = skills.concat(inputList[i].name);
+    }
+    console.log(skills);
+    }
+  }
+
   inputListener = (e) => {
     this.setState({inputValue: e.target.value});
   }
@@ -80,6 +113,12 @@ class App extends Component {
       inputList: arrayMove(this.state.inputList, oldIndex, newIndex),
     });
   };
+
+  _handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      this.addTag();
+    }
+  }
 
   render() {
 
@@ -96,11 +135,11 @@ class App extends Component {
         </h2>
 
         <label className="label">Your Skills (Upto 10)</label>
-        { this.state.helper ? <p className="help has-text-danger">You dumb idiot enter something</p> : null }
+        { this.state.helper ? <p className="help has-text-danger">{ this.state.helperText }</p> : null }
 
         <div className="field has-addons">
           <div className="control is-expanded">
-            <input className="input" type="text" value={this.inputValue} onChange={this.inputListener} ref="tagInput"/>
+            <input className="input" type="text" value={this.inputValue} onChange={this.inputListener} onKeyPress={this._handleKeyPress} ref="tagInput"/>
           </div>
           <div className="control">
             <a className="button is-info" onClick={this.addTag}>Add</a>
@@ -108,14 +147,11 @@ class App extends Component {
         </div>
 
         <div className="magicz">
-          { this.state.inputList.map(function(tagMeta) {
-              return (<Tag name={tagMeta.name} key={tagMeta.key} delete={this.deleteSaidTag}/>)
-          }, this) }
+          <SortableList items={this.state.inputList} onSortEnd={this.onSortEnd} axis="x" />
         </div>
 
-        <a className="button is-info continue">Continue</a>
-
-        <SortableList items={this.state.inputList} onSortEnd={this.onSortEnd} axis="x" />
+        <a className="button is-info continue" onClick={this.submitSkills}>Continue</a>
+        <p className="help">Check your console for the logged array</p>
 
       </div>
     );
